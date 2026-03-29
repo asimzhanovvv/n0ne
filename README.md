@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is a full-stack web application that provides a unified chat interface for interacting with AI models via OpenRouter and Ollama.  
+This project is a full-stack web application that provides a unified chat interface for interacting with AI models via OpenRouter.  
 It allows users to create conversations, manage chat history, and organize interactions within workspaces.
 
 The application is built using **Angular (frontend)** and **Django + DRF (backend)**.
@@ -20,7 +20,7 @@ The application is built using **Angular (frontend)** and **Django + DRF (backen
 ## Project Goals
 
 - Provide a modern chat interface for AI interaction  
-- Support multiple AI models (OpenRouter / Ollama)  
+- Support multiple AI models (OpenRouter)  
 - Store chat history and user data  
 - Implement secure authentication system  
 - Demonstrate full-stack development  
