@@ -1,6 +1,6 @@
 "# n0ne" 
-This project is a full-stack web application that provides a unified chat interface for interacting with multiple AI models via external providers such as OpenRouter and Ollama.
+This project is a full-stack web application that provides a unified interface for interacting with multiple AI models in one place.
 
-The system allows users to create and manage conversations, organize them into workspaces, and interact with different large language models (LLMs) through a single, user-friendly interface inspired by modern AI platforms like Open WebUI.
+Users can create and manage conversations, organize them into workspaces, and seamlessly switch between different large language models (LLMs) powered by providers like OpenRouter and Ollama. The interface is inspired by modern AI platforms, focusing on simplicity, clarity, and productivity.
 
-The application is built using Angular (frontend) and Django + Django REST Framework (backend), following a client-server architecture.
+The application is built with Angular (frontend) and Django + Django REST Framework (backend), following a scalable client-server architecture that allows easy integration of new models and features
