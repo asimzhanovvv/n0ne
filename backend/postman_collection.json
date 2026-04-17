@@ -1,0 +1,392 @@
+{
+  "info": {
+    "name": "N0ne-K1 API",
+    "_postman_id": "n0ne-k1-collection-2024",
+    "description": "Full API collection for N0ne-K1 AI Chat Interface.\nBase URL: http://localhost:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/register/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"radmir140606\",\n  \"email\": \"radmir140606@icloud.com\",\n  \"password\": \"securePass123\",\n  \"password2\": \"securePass123\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Register Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"access\": \"eyJ...\",\n  \"refresh\": \"eyJ...\",\n  \"user\": {\n    \"id\": 1,\n    \"username\": \"radmir140606\",\n    \"email\": \"radmir140606@icloud.com\",\n    \"date_joined\": \"2024-01-01T00:00:00Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', json.access);",
+                  "pm.collectionVariables.set('refresh_token', json.refresh);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/login/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"radmir140606\",\n  \"password\": \"securePass123\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Login Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"access\": \"eyJ...\",\n  \"refresh\": \"eyJ...\",\n  \"user\": {\n    \"id\": 1,\n    \"username\": \"radmir140606\",\n    \"email\": \"radmir140606@icloud.com\",\n    \"date_joined\": \"2024-01-01T00:00:00Z\"\n  }\n}"
+            },
+            {
+              "name": "Login Failed",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"non_field_errors\": [\"Invalid username or password.\"]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/auth/logout/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Logout Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"detail\": \"Successfully logged out.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/profile/"
+          },
+          "response": [
+            {
+              "name": "Profile",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"username\": \"radmir140606\",\n  \"email\": \"radmir140606@icloud.com\",\n  \"date_joined\": \"2024-01-01T00:00:00Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chats",
+      "item": [
+        {
+          "name": "List Chats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/chats/"
+          },
+          "response": [
+            {
+              "name": "Chats List",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"title\": \"Hello World\",\n    \"model\": \"google/gemini-2.0-flash-exp\",\n    \"message_count\": 4,\n    \"last_message\": {\"role\": \"assistant\", \"content\": \"Sure, I can help!\"},\n    \"created_at\": \"2024-01-01T00:00:00Z\",\n    \"updated_at\": \"2024-01-01T01:00:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/chats/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Chat\",\n  \"model\": \"google/gemini-2.0-flash-exp\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Chat Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 2,\n  \"title\": \"New Chat\",\n  \"model\": \"google/gemini-2.0-flash-exp\",\n  \"message_count\": 0,\n  \"last_message\": null,\n  \"created_at\": \"2024-01-02T00:00:00Z\",\n  \"updated_at\": \"2024-01-02T00:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Chat Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/chats/1/"
+          },
+          "response": [
+            {
+              "name": "Chat Detail",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Hello World\",\n  \"model\": \"google/gemini-2.0-flash-exp\",\n  \"messages\": [\n    {\"id\": 1, \"role\": \"user\", \"content\": \"Hello!\", \"created_at\": \"2024-01-01T00:00:00Z\"}\n  ],\n  \"created_at\": \"2024-01-01T00:00:00Z\",\n  \"updated_at\": \"2024-01-01T01:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Chat (Rename)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/chats/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Renamed Chat\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Chat Updated",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Renamed Chat\",\n  \"model\": \"google/gemini-2.0-flash-exp\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Chat",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/chats/1/"
+          },
+          "response": [
+            {
+              "name": "Chat Deleted",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "List Messages",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/chats/1/messages/"
+          },
+          "response": [
+            {
+              "name": "Messages",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\"id\": 1, \"role\": \"user\", \"content\": \"Hello!\", \"model_used\": null, \"tokens_used\": 0, \"created_at\": \"2024-01-01T00:00:00Z\"},\n  {\"id\": 2, \"role\": \"assistant\", \"content\": \"Hi there!\", \"model_used\": \"google/gemini-2.0-flash-exp\", \"tokens_used\": 15, \"created_at\": \"2024-01-01T00:00:01Z\"}\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/chats/1/messages/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"user\",\n  \"content\": \"Explain quantum computing\",\n  \"model_used\": \"google/gemini-2.0-flash-exp\",\n  \"tokens_used\": 5\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Message Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 3,\n  \"role\": \"user\",\n  \"content\": \"Explain quantum computing\",\n  \"model_used\": \"google/gemini-2.0-flash-exp\",\n  \"tokens_used\": 5,\n  \"created_at\": \"2024-01-01T00:00:10Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "API Keys",
+      "item": [
+        {
+          "name": "List API Keys",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/apikeys/"
+          },
+          "response": [
+            {
+              "name": "Keys List",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"label\": \"OpenRouter Primary\",\n    \"masked_key\": \"sk-o****abcd\",\n    \"is_default\": true,\n    \"created_at\": \"2024-01-01T00:00:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add API Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/apikeys/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"OpenRouter Primary\",\n  \"key\": \"sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  \"is_default\": true\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Key Added",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 1,\n  \"label\": \"OpenRouter Primary\",\n  \"masked_key\": \"sk-o****xxxx\",\n  \"is_default\": true,\n  \"created_at\": \"2024-01-01T00:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update API Key",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/apikeys/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"OpenRouter Backup\",\n  \"is_default\": false\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Key Updated",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"label\": \"OpenRouter Backup\",\n  \"masked_key\": \"sk-o****xxxx\",\n  \"is_default\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete API Key",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/apikeys/1/"
+          },
+          "response": [
+            {
+              "name": "Key Deleted",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/api/settings/"
+          },
+          "response": [
+            {
+              "name": "Settings",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"theme\": \"system\",\n  \"language\": \"en\",\n  \"default_model\": \"google/gemini-2.0-flash-exp\",\n  \"context_length\": 32768,\n  \"max_tokens\": 2048,\n  \"temperature\": 0.7,\n  \"notifications_enabled\": true,\n  \"updated_at\": \"2024-01-01T00:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/settings/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theme\": \"dark\",\n  \"language\": \"ru\",\n  \"temperature\": 0.8,\n  \"max_tokens\": 4096,\n  \"context_length\": 65536,\n  \"notifications_enabled\": false\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Settings Updated",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"theme\": \"dark\",\n  \"language\": \"ru\",\n  \"default_model\": \"google/gemini-2.0-flash-exp\",\n  \"context_length\": 65536,\n  \"max_tokens\": 4096,\n  \"temperature\": 0.8,\n  \"notifications_enabled\": false,\n  \"updated_at\": \"2024-01-02T00:00:00Z\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
