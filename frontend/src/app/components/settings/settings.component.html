@@ -1,0 +1,234 @@
+<div class="settings-page">
+
+  <!-- Floating Back Button (Since header is removed to match screenshot style) -->
+  <button class="floating-back-btn" (click)="goBack()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+
+  <div class="settings-body">
+
+    <!-- Top Card: Profile Info + Tabs (EXACT MATCH) -->
+    <div class="card header-card">
+      <div class="header-left">
+        <div class="profile-name">{{ settings().display_name || auth.currentUser()?.username }}</div>
+        <div class="profile-email">{{ auth.currentUser()?.email || 'No email set' }}</div>
+      </div>
+      
+      <div class="header-right">
+        <button class="nav-tab" [class.active]="activeTab==='general'" (click)="activeTab='general'">{{ i18n.t('tabGeneral') }}</button>
+        <button class="nav-tab" [class.active]="activeTab==='profile'" (click)="activeTab='profile'">{{ i18n.t('tabProfile') }}</button>
+        <button class="btn-signout" (click)="auth.logout()">{{ i18n.t('signOut') }}</button>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    @if (activeTab === 'profile') {
+      <div class="card settings-card">
+        <div class="card-title">{{ i18n.t('tabProfile') }}</div>
+
+        <!-- Avatar and Name -->
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('displayName') }}</div>
+          <div class="flex items-center gap-4">
+            <div class="avatar-edit-wrap">
+              <div class="avatar-circle" [style.background]="settings().avatar_color">
+                @if (settings().avatar_emoji) {
+                  @if (getIconPath(settings().avatar_emoji || '')) {
+                    <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path [attr.d]="getIconPath(settings().avatar_emoji || '')"/>
+                    </svg>
+                  } @else {
+                    <span class="avatar-emoji">{{ settings().avatar_emoji }}</span>
+                  }
+                } @else {
+                  <span class="avatar-initial">{{ getAvatarInitial() }}</span>
+                }
+              </div>
+              <button class="btn-edit-avatar" (click)="$event.stopPropagation(); showAvatarMenu = !showAvatarMenu" [style.color]="settings().avatar_color">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+              
+              <!-- Avatar Popup -->
+              @if (showAvatarMenu) {
+                <div class="avatar-popup" (click)="$event.stopPropagation()">
+                  <div class="popup-section">
+                    <div class="popup-title">{{ i18n.t('avatarColor') }}</div>
+                    <div class="color-grid">
+                      @for (c of colors; track c) {
+                        <button class="color-swatch" [style.background]="c" (click)="setAvatarColor(c)"></button>
+                      }
+                    </div>
+                  </div>
+                  <div class="popup-section">
+                    <div class="popup-title">{{ i18n.t('avatarEmoji') }}</div>
+                    <div class="emoji-grid">
+                      @for (icon of avatarIcons; track icon) {
+                        <button class="emoji-btn icon-btn" (click)="setAvatarEmoji(icon)">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path [attr.d]="getIconPath(icon)"/>
+                          </svg>
+                        </button>
+                      }
+                      <button class="emoji-btn btn-reset" (click)="setAvatarEmoji('')">✕</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+            <input type="text" class="form-input" [(ngModel)]="settings().display_name" style="width: 250px;">
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- Bio -->
+        <div class="setting-col">
+          <div class="setting-label-top">{{ i18n.t('bio') }}</div>
+          <textarea class="form-textarea" rows="3" [(ngModel)]="settings().bio" [placeholder]="i18n.t('bioPlaceholder')"></textarea>
+        </div>
+        <div class="divider"></div>
+
+        <!-- Gender -->
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('gender') }}</div>
+          <select class="sel" [(ngModel)]="settings().gender" style="width: 160px;">
+            <option value="">{{ i18n.t('select') }}</option>
+            <option value="male">{{ i18n.t('genderMale') }}</option>
+            <option value="female">{{ i18n.t('genderFemale') }}</option>
+            <option value="other">{{ i18n.t('genderOther') }}</option>
+            <option value="prefer_not_to_say">{{ i18n.t('genderPreferNot') }}</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+
+        <!-- Birthday -->
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('birthday') }}</div>
+          <input type="date" class="form-input" [(ngModel)]="settings().birthday" style="width: 160px;">
+        </div>
+
+        <div class="save-row">
+          <button class="btn-primary" (click)="saveSettings()">{{ i18n.t('save') }}</button>
+          @if (saveMsg) { <span class="save-success-msg">{{ saveMsg }}</span> }
+        </div>
+      </div>
+
+      <!-- Password Change Card -->
+      <div class="card settings-card">
+        <div class="card-title">{{ i18n.t('changePassword') }}</div>
+        
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('currentPassword') }}</div>
+          <input type="password" class="form-input" [(ngModel)]="currentPassword" autocomplete="new-password" style="max-width: 300px;">
+        </div>
+        <div class="divider"></div>
+
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('newPassword') }}</div>
+          <input type="password" class="form-input" [(ngModel)]="newPassword" autocomplete="new-password" style="max-width: 300px;">
+        </div>
+        <div class="divider"></div>
+
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('confirmPassword') }}</div>
+          <input type="password" class="form-input" [(ngModel)]="confirmPassword" autocomplete="new-password" style="max-width: 300px;">
+        </div>
+
+        @if (passChangeMsg) {
+          <div class="auth-msg" [class.err]="passChangeErr">{{ passChangeMsg }}</div>
+        }
+        <div class="save-row" style="margin-top: 10px;">
+          <button class="btn-primary" (click)="changePassword()">{{ i18n.t('save') }}</button>
+        </div>
+      </div>
+    }
+
+    <!-- GENERAL TAB -->
+    @if (activeTab === 'general') {
+      <div class="card settings-card">
+        <div class="card-title">{{ i18n.t('general') }}</div>
+
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('theme') }}</div>
+          <div class="btn-group">
+            <button [class.active]="settings().theme==='light'" (click)="updateTheme('light')">{{ i18n.t('themeLight') }}</button>
+            <button [class.active]="settings().theme==='dark'" (click)="updateTheme('dark')">{{ i18n.t('themeDark') }}</button>
+            <button [class.active]="settings().theme==='system'" (click)="updateTheme('system')">{{ i18n.t('themeSystem') }}</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        
+        <div class="setting-row-horizontal">
+          <div class="setting-label">{{ i18n.t('language') }}</div>
+          <select class="sel" [ngModel]="settings().language" (ngModelChange)="updateLanguage($event)" style="width: 140px;">
+            <option value="en">{{ i18n.t('languageEn') }}</option>
+            <option value="ru">{{ i18n.t('languageRu') }}</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-title">{{ i18n.t('modelSettings') }}</div>
+
+        <div class="setting-col">
+          <div class="setting-label-top">{{ i18n.t('contextLength') }} <span class="val-badge">{{ settings().context_length ?? 50 }}</span></div>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="50" step="1" [(ngModel)]="settings().context_length" (change)="saveSettings()" class="slider">
+            <div class="slider-track-labels">
+              <span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-col">
+          <div class="setting-label-top">{{ i18n.t('temperature') }} <span class="val-badge">{{ settings().temperature ?? 0.7 }}</span></div>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="1" step="0.05" [(ngModel)]="settings().temperature" (change)="saveSettings()" class="slider">
+            <div class="slider-track-labels">
+              <span>0</span><span>0.25</span><span>0.5</span><span>0.75</span><span>1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card settings-card api-keys-card">
+        <div class="card-title">{{ i18n.t('apiKeys') }}</div>
+
+        @for (key of apiKeys(); track key.id) {
+          <div class="key-row">
+            <div class="key-info">
+              <div class="key-label">{{ key.label }}</div>
+              <div class="key-masked">{{ key.masked_key }}</div>
+            </div>
+            <div class="key-actions">
+              @if (key.is_default) {
+                <span class="badge-default">{{ i18n.t('defaultBadge') }}</span>
+              } @else {
+                <button class="btn-ghost-sm" (click)="setDefaultKey(key.id)">{{ i18n.t('setDefault') }}</button>
+              }
+              <button class="btn-delete" (click)="deleteKey(key.id)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (apiKeys().length === 0) {
+          <div class="no-keys">{{ i18n.t('noKeys') }}</div>
+        }
+
+        <div class="add-key-container">
+          <div class="add-key-inputs">
+            <input type="text" [(ngModel)]="newKeyLabel" [placeholder]="i18n.t('keyLabel')" class="form-input" autocomplete="off">
+            <input type="text" [(ngModel)]="newKeyValue" [placeholder]="i18n.t('keyValue')" class="form-input" autocomplete="new-password">
+          </div>
+          <button class="btn-primary" (click)="addKey()">{{ i18n.t('addKey') }}</button>
+        </div>
+        @if (addKeyError) { <div class="err-msg">{{ addKeyError }}</div> }
+      </div>
+    }
+
+  </div>
+</div>

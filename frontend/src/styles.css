@@ -1,1 +1,103 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ===================== CSS Variables ===================== */
+:root {
+  --primary: #006950;
+  --primary-hover: #00533e;
+  --primary-light: rgba(0, 105, 80, 0.12);
+  --primary-border: rgba(0, 105, 80, 0.3);
+
+  /* Light theme */
+  --bg: #ffffff;
+  --bg-alt: #f6f8f7;
+  --bg-secondary: #f0f2f1;
+  --sidebar-bg: #f9fafb;
+  --text: #111111;
+  --text-muted: #6b7280;
+  --text-secondary: #9ca3af;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --input-bg: #ffffff;
+  --card-bg: #ffffff;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+}
+
+/* Chrome Autofill dark mode fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 500px var(--input-bg) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme="dark"] {
+  --primary: #006950;
+  --primary-hover: #00533e;
+  --primary-light: rgba(0, 105, 80, 0.15);
+  --primary-border: rgba(0, 105, 80, 0.3);
+
+  --bg: #0d0d0d;
+  --bg-alt: #111111;
+  --bg-secondary: #1a1a1a;
+  --sidebar-bg: #0a0a0a;
+  --text: #e5e5e5;
+  --text-muted: #8a8a8a;
+  --text-secondary: #555555;
+  --border: #1f1f1f;
+  --border-strong: #2a2a2a;
+  --input-bg: #141414;
+  --card-bg: #111111;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* ===================== Reset ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================== Scrollbar ===================== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* ===================== Utilities ===================== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.flex-1 { flex: 1; }
+.w-full { width: 100%; }
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: 12px; }
+.text-base { font-size: 14px; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
